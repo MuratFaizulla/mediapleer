@@ -64,7 +64,7 @@ const Embed: FC<Props> = ({ id }) => {
   }
 
   return (
-      <Player roomId={id} socket={socket}  fullHeight={true}/>
+      <Player roomId={id} socket={socket}  fullHeight={true} />
   )
 }
 

@@ -24,7 +24,7 @@ export default function Index() {
             e.preventDefault()
 
             if (room.length >= 4) {
-              await router.push("/room/" + room)
+              await router.push("/player/" + room)
             }
           }}
         >
@@ -53,7 +53,7 @@ export default function Index() {
                       roomId.match(/^[a-z]{4,}$/)
                     ) {
                       console.log("Generated new roomId:", roomId)
-                      await router.push("/room/" + roomId)
+                      await router.push("/player/" + roomId)
                     } else {
                       throw Error("Invalid roomId generated: " + roomId)
                     }
@@ -82,7 +82,7 @@ export default function Index() {
           <small className={"text-neutral-600"}>
             <div>Currently connected:</div>
             <div className={"flex flex-row gap-2"}>
-              <div>Rooms: {data?.rooms || 0}</div>
+              <div>Player groups: {data?.rooms || 0}</div>
               <div>Users: {data?.users || 0}</div>
             </div>
           </small>

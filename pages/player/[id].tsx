@@ -7,7 +7,7 @@ export default function RoomPage({ roomId }: { roomId: string }) {
     <Layout
       meta={{
         title: "Room " + roomId,
-        description: "Watch in sync and join the watch party with your friends",
+        description: "Смотрите синхронно и присоединяйтесь к вечеринке вместе со своими друзьями",
       }}
       roomId={roomId}
     >

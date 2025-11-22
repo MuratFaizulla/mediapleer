@@ -110,7 +110,7 @@ const PlayerMenu: FC<Props> = ({
             Switch to embed player
           </span>
         </Button>
-          <Link href={"/room/" + roomId} target="_blank" className="action flex flex-row gap-1 p-2">
+          <Link href={"/player/" + roomId} target="_blank" className="action flex flex-row gap-1 p-2">
             <IconNewTab />
             <span>
               Open full player in new tab

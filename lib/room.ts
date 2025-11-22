@@ -14,7 +14,11 @@ export const updateLastSync = (room: RoomState) => {
   return room
 }
 
-export const createNewUser = async (roomId: string, socketId: string) => {
+export const createNewUser = async (
+  roomId: string, 
+  socketId: string, 
+  ip: string  // <-- ДОБАВИТЬ ПАРАМЕТР
+) => {
   const room = await getRoom(roomId)
   if (room === null) {
     throw new Error("Creating user for non existing room:" + roomId)
@@ -29,6 +33,7 @@ export const createNewUser = async (roomId: string, socketId: string) => {
   room.users.push({
     avatar: "",
     name,
+    ip,  // <-- ДОБАВИТЬ ЭТО
     player: {
       playing: {
         src: [],
@@ -50,6 +55,13 @@ export const createNewUser = async (roomId: string, socketId: string) => {
 
   await setRoom(roomId, room)
 }
+
+
+
+
+
+
+
 
 export const createNewRoom = async (roomId: string, socketId: string) => {
   await setRoom(roomId, {

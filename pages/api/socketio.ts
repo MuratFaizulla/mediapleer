@@ -14,6 +14,25 @@ import { createNewRoom, createNewUser, updateLastSync } from "../../lib/room"
 import { Playlist, RoomState, UserState } from "../../lib/types"
 import { isUrl } from "../../lib/utils"
 
+// Функция для получения IP-адреса клиента
+const getClientIp = (socket: socketIo.Socket): string => {
+  // Если используется прокси (nginx, cloudflare и т.д.)
+  const forwarded = socket.handshake.headers["x-forwarded-for"]
+  if (forwarded) {
+    const ips = Array.isArray(forwarded) ? forwarded[0] : forwarded
+    return ips.split(",")[0].trim()
+  }
+  
+  // Проверяем x-real-ip (часто используется nginx)
+  const realIp = socket.handshake.headers["x-real-ip"]
+  if (realIp) {
+    return Array.isArray(realIp) ? realIp[0] : realIp
+  }
+  
+  // Fallback на прямой адрес сокета
+  return socket.handshake.address || "unknown"
+}
+
 const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
   // @ts-ignore
   if (res.socket !== null && "server" in res.socket && !res.socket.server.io) {
@@ -58,6 +77,8 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
         }
 
         const roomId = socket.handshake.query.roomId.toLowerCase()
+        const clientIp = getClientIp(socket)  // Получаем IP
+        
         const log = (...props: any[]) => {
           console.log(
             "[" + new Date().toUTCString() + "][room " + roomId + "]",
@@ -73,9 +94,9 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
 
         socket.join(roomId)
         await incUsers()
-        log("joined")
+        log("joined, IP:", clientIp)
 
-        await createNewUser(roomId, socket.id)
+        await createNewUser(roomId, socket.id, clientIp)  // Передаём IP
 
         socket.on("disconnect", async () => {
           await decUsers()

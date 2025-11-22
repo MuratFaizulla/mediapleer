@@ -41,6 +41,7 @@ export interface PlayerState extends TargetState {
 
 export interface UserState {
   socketIds: string[]
+  ip: string
   uid: string
   name: string
   avatar: string

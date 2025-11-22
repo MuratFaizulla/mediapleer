@@ -87,6 +87,10 @@ const UserItem: FC<Props> = ({ user, ownerId, socketId, updateName }) => {
               )}
               {secondsToTime(user.player.progress)}
             </div>
+            {/* IP виден всем пользователям */}
+            <div className={"text-xs text-gray-500 truncate"}>
+              IP: {user.ip}
+            </div>
           </>
         )}
       </div>
