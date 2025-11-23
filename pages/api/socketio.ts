@@ -11,8 +11,8 @@ import {
   setRoom,
 } from "../../lib/cache"
 import { createNewRoom, createNewUser, updateLastSync } from "../../lib/room"
-import { Playlist, RoomState, UserState } from "../../lib/types"
-import { isUrl } from "../../lib/utils"
+import { MediaSource, Playlist, RoomState, UserState } from "../../lib/types"
+import { isOneDriveUrl, isUrl } from "../../lib/utils"
 
 // Функция для получения IP-адреса клиента
 const getClientIp = (socket: socketIo.Socket): string => {
@@ -22,13 +22,13 @@ const getClientIp = (socket: socketIo.Socket): string => {
     const ips = Array.isArray(forwarded) ? forwarded[0] : forwarded
     return ips.split(",")[0].trim()
   }
-  
+
   // Проверяем x-real-ip (часто используется nginx)
   const realIp = socket.handshake.headers["x-real-ip"]
   if (realIp) {
     return Array.isArray(realIp) ? realIp[0] : realIp
   }
-  
+
   // Fallback на прямой адрес сокета
   return socket.handshake.address || "unknown"
 }
@@ -77,8 +77,8 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
         }
 
         const roomId = socket.handshake.query.roomId.toLowerCase()
-        const clientIp = getClientIp(socket)  // Получаем IP
-        
+        const clientIp = getClientIp(socket) // Получаем IP
+
         const log = (...props: any[]) => {
           console.log(
             "[" + new Date().toUTCString() + "][room " + roomId + "]",
@@ -96,7 +96,7 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
         await incUsers()
         log("joined, IP:", clientIp)
 
-        await createNewUser(roomId, socket.id, clientIp)  // Передаём IP
+        await createNewUser(roomId, socket.id, clientIp) // Передаём IP
 
         socket.on("disconnect", async () => {
           await decUsers()
@@ -308,10 +308,19 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
           if (!isUrl(url)) {
             return
           }
+          // 🔥 НОВОЕ: Определяем тип источника
+          let source = MediaSource.DirectUrl
+          if (url.includes("youtube.com") || url.includes("youtu.be")) {
+            source = MediaSource.YouTube
+          } else if (isOneDriveUrl(url)) {
+            source = MediaSource.OneDrive
+          }
 
           room.targetState.playing = {
             src: [{ src: url, resolution: "" }],
             sub: [],
+            source: source, // 🔥 НОВОЕ
+            originalUrl: url, // 🔥 НОВОЕ
           }
           room.targetState.playlist.currentIndex = -1
           room.targetState.progress = 0

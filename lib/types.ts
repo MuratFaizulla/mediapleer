@@ -71,3 +71,18 @@ export interface RoomState {
   targetState: TargetState
   commandHistory: CommandLog[]
 }
+// Добавляем новый тип источника
+export enum MediaSource {
+  YouTube = "youtube",
+  OneDrive = "onedrive",
+  DirectUrl = "direct",
+  Local = "local"
+}
+
+export interface MediaElement {
+  title?: string
+  sub: Subtitle[]
+  src: MediaOption[]
+  source?: MediaSource  // 🔥 НОВОЕ поле
+  originalUrl?: string  // 🔥 Исходная ссылка
+}

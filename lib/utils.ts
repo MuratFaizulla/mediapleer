@@ -110,3 +110,46 @@ export const getDomain = (url: string) => {
   const matches = url.match(/^(?:https?:)?(?:\/\/)?([^\/?]+)/)
   return ((matches && matches[1]) || url).replace(/^www\./, "")
 }
+// Добавляем функции для OneDrive
+export const isOneDriveUrl = (url: string): boolean => {
+  return url.includes('onedrive.live.com') || 
+         url.includes('1drv.ms') || 
+         url.includes('sharepoint.com')
+}
+
+export const convertOneDriveToDirectUrl = (shareUrl: string): string => {
+  // Обрабатываем разные типы OneDrive ссылок
+  
+  // 1. Обычная share ссылка
+  if (shareUrl.includes('onedrive.live.com/redir')) {
+    return shareUrl.replace('/redir', '/download')
+  }
+  
+  // 2. Embed ссылка
+  if (shareUrl.includes('onedrive.live.com/embed')) {
+    return shareUrl.replace('/embed', '/download')
+  }
+  
+  // 3. Короткие ссылки
+  if (shareUrl.includes('1drv.ms')) {
+    return shareUrl + '&download=1'
+  }
+  
+  // 4. Прямые download ссылки (уже готовые)
+  if (shareUrl.includes('onedrive.live.com/download')) {
+    return shareUrl
+  }
+  
+  // 5. SharePoint ссылки
+  if (shareUrl.includes('sharepoint.com')) {
+    return shareUrl + '&download=1'
+  }
+  
+  return shareUrl
+}
+
+export const getOneDriveEmbedUrl = (shareUrl: string): string => {
+  // Для случаев когда нужен embed (субтитры, метаданные)
+  const directUrl = convertOneDriveToDirectUrl(shareUrl)
+  return directUrl.replace('/download', '/embed')
+}

@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { isUrl, shellSanitizeUrl } from "../../lib/utils"
+import { isUrl, shellSanitizeUrl, isOneDriveUrl, convertOneDriveToDirectUrl } from "../../lib/utils"
 import { exec, ExecException } from "child_process"
 import * as util from "util"
 
 const asyncExec = util.promisify(exec)
+
 const memoizeExtractFromUrl = () => {
   let cache: Record<string, any> = {}
   return async (url: string) => {
@@ -26,6 +27,20 @@ const memoizeExtractFromUrl = () => {
     }
 
     try {
+      // 🔥 НОВОЕ: Проверяем OneDrive ссылки
+      if (isOneDriveUrl(url)) {
+        const directUrl = convertOneDriveToDirectUrl(url)
+        console.log("OneDrive URL converted:", url, "->", directUrl)
+        
+        cache[url] = {
+          error: false,
+          stdout: directUrl,
+          stderr: "",
+        }
+        return cache[url]
+      }
+
+      // Обычная обработка YouTube через yt-dlp
       cache[url] = await asyncExec("yt-dlp -g " + url)
     } catch (error) {
       const e = error as ExecException
@@ -40,6 +55,8 @@ const memoizeExtractFromUrl = () => {
     return cache[url]
   }
 }
+
+// Остальной код остается без изменений...
 
 const extractFromUrl = memoizeExtractFromUrl()
 
