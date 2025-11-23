@@ -183,35 +183,65 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
           await broadcast(room)
         })
 
+        // 🔥 ОБНОВЛЕННАЯ ЛОГИКА: ЦИКЛИЧЕСКИЙ ПЛЕЙЛИСТ
+       // 🔥 ОБНОВЛЕННАЯ ЛОГИКА: ЦИКЛИЧЕСКИЙ ПЛЕЙЛИСТ С ОТЛАДКОЙ
         socket.on("playEnded", async () => {
           let room = await getRoom(roomId)
           if (room === null) {
             throw new Error("Play ended for non existing room:" + roomId)
           }
-          log("playback ended")
+          
+          // 🔍 ОТЛАДОЧНЫЕ ЛОГИ
+          log("🎬 playback ended")
+          log("📊 PLAYLIST DEBUG:", {
+            currentIndex: room.targetState.playlist.currentIndex,
+            playlistLength: room.targetState.playlist.items.length,
+            loopEnabled: room.targetState.loop,
+            playlistItems: room.targetState.playlist.items.map((item, index) => ({
+              index,
+              title: item.title || 'No title',
+              src: item.src[0]?.src?.substring(0, 50) + '...' || 'No src'
+            }))
+          })
 
+          // ЛОГИКА ЦИКЛИЧЕСКОГО ПЛЕЙЛИСТА:
           if (room.targetState.loop) {
+            // 1. Если включен LOOP одного видео - повторяем его
             room.targetState.progress = 0
             room.targetState.paused = false
+            log("🔁 LOOP: looping current video")
           } else if (
             room.targetState.playlist.currentIndex + 1 <
             room.targetState.playlist.items.length
           ) {
-            room.targetState.playing =
-              room.targetState.playlist.items[
-                room.targetState.playlist.currentIndex + 1
-              ]
-            room.targetState.playlist.currentIndex += 1
+            // 2. Если есть следующее видео в плейлисте - переходим к нему
+            const nextIndex = room.targetState.playlist.currentIndex + 1
+            room.targetState.playing = room.targetState.playlist.items[nextIndex]
+            room.targetState.playlist.currentIndex = nextIndex
             room.targetState.progress = 0
             room.targetState.paused = false
+            log("▶️ NEXT VIDEO: playing next video in playlist, index:", nextIndex)
+            log("📹 Next video src:", room.targetState.playing.src[0]?.src?.substring(0, 80) + '...')
+          } else if (room.targetState.playlist.items.length > 0) {
+            // 3. 🔥 НОВАЯ ЛОГИКА: Дошли до конца плейлиста - начинаем сначала!
+            room.targetState.playing = room.targetState.playlist.items[0]
+            room.targetState.playlist.currentIndex = 0
+            room.targetState.progress = 0
+            room.targetState.paused = false
+            log("🔄 PLAYLIST CYCLE: last video ended, restarting from first video!")
+            log("📹 First video src:", room.targetState.playing.src[0]?.src?.substring(0, 80) + '...')
           } else {
+            // 4. Если плейлист пустой - останавливаемся
             room.targetState.progress =
               room.users.find((user) => user.socketIds[0] === socket.id)?.player
                 .progress || 0
             room.targetState.paused = true
+            log("⏹️ EMPTY: empty playlist, stopping playback")
           }
+
           room.targetState.lastSync = new Date().getTime() / 1000
           await broadcast(room)
+          log("📡 Broadcast sent with updated room state")
         })
 
         socket.on("playAgain", async () => {
@@ -308,19 +338,20 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
           if (!isUrl(url)) {
             return
           }
-          // 🔥 НОВОЕ: Определяем тип источника
+
+          // Определяем тип источника
           let source = MediaSource.DirectUrl
           if (url.includes("youtube.com") || url.includes("youtu.be")) {
             source = MediaSource.YouTube
-          } else if (isOneDriveUrl(url)) {
+          } else if (isOneDriveUrl && isOneDriveUrl(url)) {
             source = MediaSource.OneDrive
           }
 
           room.targetState.playing = {
             src: [{ src: url, resolution: "" }],
             sub: [],
-            source: source, // 🔥 НОВОЕ
-            originalUrl: url, // 🔥 НОВОЕ
+            source: source,
+            originalUrl: url,
           }
           room.targetState.playlist.currentIndex = -1
           room.targetState.progress = 0
