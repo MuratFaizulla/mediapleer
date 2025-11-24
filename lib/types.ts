@@ -11,7 +11,9 @@ export interface MediaOption {
 export interface MediaElement {
   title?: string
   sub: Subtitle[]
-  src: MediaOption[]
+  src: MediaOption[],
+    source?: MediaSource      // 🔥 Добавь
+  originalUrl?: string
 }
 
 export interface Playlist {

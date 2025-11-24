@@ -13,7 +13,8 @@ import PlaylistMenu from "./playlist/PlaylistMenu"
 import IconLoop from "./icon/IconLoop"
 import InputUrl from "./input/InputUrl"
 import UserList from "./user/UserList"
-
+import { PlaylistManager } from "./PlaylistManager"
+import { Playlist } from "../lib/types"
 interface Props {
   id: string
 }
@@ -27,7 +28,10 @@ const Room: FC<Props> = ({ id }) => {
     ClientToServerEvents
   > | null>(null)
   const [url, setUrl] = useState("")
-
+const [playlist, setPlaylist] = useState<Playlist>({
+  items: [],
+  currentIndex: -1
+})
   useEffect(() => {
     fetch("/api/socketio").finally(() => {
       if (socket !== null) {
@@ -73,7 +77,13 @@ const Room: FC<Props> = ({ id }) => {
     <div className={"flex flex-col sm:flex-row gap-1"}>
       <div className={"grow"}>
         <Player roomId={id} socket={socket} />
-
+{socket && (
+  <PlaylistManager
+    socket={socket}
+    currentPlaylist={playlist}
+    onPlaylistUpdate={setPlaylist}
+  />
+)}
         <div className={"flex flex-row gap-1 p-1"}>
           <Button
             tooltip={"Do a forced manual sync"}

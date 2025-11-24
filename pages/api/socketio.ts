@@ -12,7 +12,8 @@ import {
 } from "../../lib/cache"
 import { createNewRoom, createNewUser, updateLastSync } from "../../lib/room"
 import { MediaSource, Playlist, RoomState, UserState } from "../../lib/types"
-import { isOneDriveUrl, isUrl } from "../../lib/utils"
+// import { isOneDriveUrl, isUrl } from "../../lib/utils"
+
 
 // Функция для получения IP-адреса клиента
 const getClientIp = (socket: socketIo.Socket): string => {
@@ -325,39 +326,50 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
           await broadcast(room)
         })
 
-        socket.on("playUrl", async (url) => {
-          const room = await getRoom(roomId)
-          if (room === null) {
-            throw new Error(
-              "Невозможная несуществующая комната, ничего отправить невозможно:" + roomId
-            )
-          }
-          log("URL-адрес воспроизведения", url)
+        // socket.on("playUrl", async (url) => {
+        //   const room = await getRoom(roomId)
+        //   if (room === null) {
+        //     throw new Error(
+        //       "Невозможная несуществующая комната, ничего отправить невозможно:" + roomId
+        //     )
+        //   }
+        //   log("URL-адрес воспроизведения", url)
 
-          if (!isUrl(url)) {
-            return
-          }
+        //   if (!isUrl(url)) {
+        //     return
+        //   }
 
-          // Определяем тип источника
-          let source = MediaSource.DirectUrl
-          if (url.includes("youtube.com") || url.includes("youtu.be")) {
-            source = MediaSource.YouTube
-          } else if (isOneDriveUrl && isOneDriveUrl(url)) {
-            source = MediaSource.OneDrive
-          }
+        //   // Определяем тип источника
+        //   let source = MediaSource.DirectUrl
+        //   if (url.includes("youtube.com") || url.includes("youtu.be")) {
+        //     source = MediaSource.YouTube
+        //   } else if (isOneDriveUrl && isOneDriveUrl(url)) {
+        //     source = MediaSource.OneDrive
+        //   }
 
-          room.targetState.playing = {
-            src: [{ src: url, resolution: "" }],
-            sub: [],
-            source: source,
-            originalUrl: url,
-          }
-          room.targetState.playlist.currentIndex = -1
-          room.targetState.progress = 0
-          room.targetState.lastSync = new Date().getTime() / 1000
-          await broadcast(room)
-        })
+        //   room.targetState.playing = {
+        //     src: [{ src: url, resolution: "" }],
+        //     sub: [],
+        //     source: source,
+        //     originalUrl: url,
+        //   }
+        //   room.targetState.playlist.currentIndex = -1
+        //   room.targetState.progress = 0
+        //   room.targetState.lastSync = new Date().getTime() / 1000
+        //   await broadcast(room)
+        // })
+socket.on("playUrl", async (url) => {
+  const room = await getRoom(roomId)
+  if (room === null) {
+    throw new Error("...")
+  }
+  log("URL-адрес воспроизведения", url)
 
+  // 🗑️ УБЕРИ ВСЮ ПРОВЕРКУ НА blob: - больше не нужна!
+  
+  // ✅ Твой существующий код для обычных URLs остается без изменений
+  // Теперь все файлы (включая загруженные) будут HTTP URLs
+})
         socket.on("fetch", async () => {
           const room = await getRoom(roomId)
           if (room === null) {
