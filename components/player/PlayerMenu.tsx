@@ -60,7 +60,7 @@ const PlayerMenu: FC<Props> = ({
   const tabs: Tab[] = [
     {
       icon: <IconSettings />,
-      title: "Playback rate",
+      title: "Скорость воспроизведения",
       content: (
         <InputRadio
           value={playbackRate.toString()}
@@ -82,24 +82,24 @@ const PlayerMenu: FC<Props> = ({
     },
     {
       icon: <IconLoop />,
-      title: "Loop",
+      title: "повтор",
       content: (
         <Button tooltip={"Click to toggle loop"} onClick={() => setLoop(!loop)}>
-          {loop ? "Disable loop" : "Enable loop"}
+          {loop ? "Отключить повтор" : "Включить повтор"}
         </Button>
       ),
     },
     {
       icon: <IconShare />,
-      title: "Open embed",
+      title: "Открыть вставку",
       content: (
         <div className="flex flex-col">
         <Button tooltip="Switch to full player" className="action flex flex-row gap-1 p-2" onClick={() => {
-          router.push("/room/" + roomId)
+          router.push("/player/" + roomId)
         }}>
           <IconNewTab />
           <span>
-            Switch to full player
+          Переключиться на полную версию проигрывателя
           </span>
         </Button>
         <Button tooltip="Switch to embed player" className="action flex flex-row gap-1 p-2" onClick={() => {
@@ -107,19 +107,19 @@ const PlayerMenu: FC<Props> = ({
         }}>
           <IconNewTab />
           <span>
-            Switch to embed player
+          Переключиться на встроенный плеер
           </span>
         </Button>
           <Link href={"/player/" + roomId} target="_blank" className="action flex flex-row gap-1 p-2">
             <IconNewTab />
             <span>
-              Open full player in new tab
+            Открыть полный плеер в новой вкладке
             </span>
           </Link>
           <Link href={"/embed/" + roomId} target="_blank" className="action flex flex-row gap-1 p-2">
             <IconNewTab />
             <span>
-              Open embed player in new tab
+            Открыть встроенный плеер в новой вкладке
             </span>
           </Link>
         </div>
@@ -143,9 +143,9 @@ const PlayerMenu: FC<Props> = ({
               setCurrentSrc(newSrc)
             } else {
               console.error(
-                "Impossible resolution",
+                "Невозможное разрешение",
                 resolution,
-                "not found in",
+                "не найдено в",
                 playing
               )
             }
@@ -169,7 +169,7 @@ const PlayerMenu: FC<Props> = ({
             if (newSub) {
               setCurrentSub(newSub)
             } else {
-              console.error("Impossible sub", newSub, "not found in", playing)
+              console.error("Невозможная подлодка", newSub, "не найдено в", playing)
             }
           }}
           interaction={interaction}

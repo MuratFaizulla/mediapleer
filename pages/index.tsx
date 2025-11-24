@@ -28,7 +28,7 @@ export default function Index() {
             }
           }}
         >
-          <h1 className={"text-2xl"}>Got invited?</h1>
+          <h1 className={"text-2xl"}>Получили приглашение?</h1>
           <InputText
             value={room}
             placeholder={"Enter a room ID"}
@@ -63,7 +63,7 @@ export default function Index() {
                   })
               }}
             >
-              Generate room
+              Создать комнату
             </Button>
             <Button
               tooltip={room.length < 4 ? "Invalid room id" : "Join room"}
@@ -76,14 +76,14 @@ export default function Index() {
               disabled={room.length < 4}
               type={"submit"}
             >
-              Join room
+              Присоединиться к комнате
             </Button>
           </div>
           <small className={"text-neutral-600"}>
-            <div>Currently connected:</div>
+            <div>В данный момент подключено:</div>
             <div className={"flex flex-row gap-2"}>
-              <div>Player groups: {data?.rooms || 0}</div>
-              <div>Users: {data?.users || 0}</div>
+              <div>Группы игроков: {data?.rooms || 0}</div>
+              <div>Пользователи: {data?.users || 0}</div>
             </div>
           </small>
         </form>

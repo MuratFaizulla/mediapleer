@@ -84,12 +84,12 @@ const Room: FC<Props> = ({ id }) => {
             }}
           >
             <IconLoop className={"hover:animate-spin"} />
-            <div className={"hidden-below-sm"}>Manual sync</div>
+            <div className={"hidden-below-sm"}>Ручная синхронизация</div>
           </Button>
           <InputUrl
             className={"grow"}
             url={url}
-            placeholder={"Play url now"}
+            placeholder={"Воспроизвести URL сейчас"}
             tooltip={"Play given url now"}
             onChange={setUrl}
             onSubmit={() => {
@@ -98,7 +98,7 @@ const Room: FC<Props> = ({ id }) => {
               setUrl("")
             }}
           >
-            Play
+            Играть
           </InputUrl>
         </div>
 

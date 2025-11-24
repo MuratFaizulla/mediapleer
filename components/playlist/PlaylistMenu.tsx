@@ -79,20 +79,20 @@ const PlaylistMenu: FC<Props> = ({ socket }) => {
           className={"sm:rotate-90"}
         />
         <div className={classNames(!expanded && "sm:hidden")}>
-          {expanded ? "Hide" : "Show"} Playlist
+          {expanded ? "Скрывать" : "Показывать"} Плейлист
         </div>
       </ControlButton>
       {expanded && (
         <>
           <InputUrl
             url={url}
-            placeholder={"Add url..."}
+            placeholder={"Добавить URL-адрес..."}
             tooltip={"Add url to the playlist"}
             onChange={setUrl}
             className={"my-1"}
             onSubmit={() => addItem(url)}
           >
-            Add
+            Добавить
           </InputUrl>
           <DragDropContext
             onDragEnd={(result) => {

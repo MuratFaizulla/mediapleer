@@ -15,7 +15,7 @@ const Head = ({ customMeta }: { customMeta?: MetaProps }) => {
 
   const meta: MetaProps = {
     title: getSiteName(),
-    description: "Watch videos or play music in sync with your friends",
+    description: "Смотрите видео или слушайте музыку вместе с друзьями",
     type: "website",
     robots: "noindex, noarchive, follow",
     image: getSiteDomain() + "/apple-touch-icon.png",

@@ -144,7 +144,7 @@ const Controls: FC<Props> = ({
             if (interaction) {
               doubleClick = true
               interaction = false
-              console.log("Toggled fullscreen")
+              console.log("Переключен в полноэкранный режим")
               setFullscreen(!fullscreen)
             } else if (touch) {
               setShowControls(!showControls)
@@ -278,7 +278,7 @@ const Controls: FC<Props> = ({
           <ControlButton
             tooltip={fullscreen ? "Leave fullscreen" : "Enter fullscreen"}
             onClick={() => {
-              console.log("Toggled fullscreen")
+              console.log("Переключить на полный экран")
               setFullscreen(!fullscreen)
             }}
             interaction={showControlsAction}

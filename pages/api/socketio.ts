@@ -36,7 +36,7 @@ const getClientIp = (socket: socketIo.Socket): string => {
 const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
   // @ts-ignore
   if (res.socket !== null && "server" in res.socket && !res.socket.server.io) {
-    console.log("*First use, starting socket.io")
+    console.log("*Первое использование, запуск socket.io")
 
     const io = new Server<ClientToServerEvents, ServerToClientEvents>(
       // @ts-ignore
@@ -89,18 +89,18 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
 
         if (!(await roomExists(roomId))) {
           await createNewRoom(roomId, socket.id)
-          log("created room")
+          log("созданная комната")
         }
 
         socket.join(roomId)
         await incUsers()
-        log("joined, IP:", clientIp)
+        log("присоединился, IP:", clientIp)
 
         await createNewUser(roomId, socket.id, clientIp) // Передаём IP
 
         socket.on("disconnect", async () => {
           await decUsers()
-          log("disconnected")
+          log("отключен")
           const room = await getRoom(roomId)
           if (room === null) return
 
@@ -109,7 +109,7 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
           )
           if (room.users.length === 0) {
             await deleteRoom(roomId)
-            log("deleted empty room")
+            log("удалена пустая комната")
           } else {
             if (room.ownerId === socket.id) {
               room.ownerId = room.users[0].uid
@@ -121,9 +121,9 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
         socket.on("setPaused", async (paused) => {
           let room = await getRoom(roomId)
           if (room === null) {
-            throw new Error("Setting pause for non existing room:" + roomId)
+            throw new Error("Установка паузы для несуществующей комнаты:" + roomId)
           }
-          log("set paused to", paused)
+          log("установить паузу на", paused)
 
           room = updateLastSync(room)
           room.targetState.paused = paused
@@ -133,9 +133,9 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
         socket.on("setLoop", async (loop) => {
           const room = await getRoom(roomId)
           if (room === null) {
-            throw new Error("Setting loop for non existing room:" + roomId)
+            throw new Error("Настройка цикла для несуществующей комнаты:" + roomId)
           }
-          log("set loop to", loop)
+          log("установить цикл на", loop)
 
           room.targetState.loop = loop
           await broadcast(updateLastSync(room))
@@ -144,7 +144,7 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
         socket.on("setProgress", async (progress) => {
           const room = await getRoom(roomId)
           if (room === null) {
-            throw new Error("Setting progress for non existing room:" + roomId)
+            throw new Error("Настройка прогресса для несуществующей комнаты:" + roomId)
           }
 
           room.users = room.users.map((user) => {
@@ -161,10 +161,10 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
           let room = await getRoom(roomId)
           if (room === null) {
             throw new Error(
-              "Setting playbackRate for non existing room:" + roomId
+              "Настройка playbackRate для несуществующей комнаты:" + roomId
             )
           }
-          log("set playbackRate to", playbackRate)
+          log("установить скорость воспроизведения", playbackRate)
 
           room = updateLastSync(room)
           room.targetState.playbackRate = playbackRate
@@ -174,26 +174,25 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
         socket.on("seek", async (progress) => {
           const room = await getRoom(roomId)
           if (room === null) {
-            throw new Error("Setting progress for non existing room:" + roomId)
+            throw new Error("Настройка прогресса для несуществующей комнаты:" + roomId)
           }
-          log("seeking to", progress)
+          log("стремясь", progress)
 
           room.targetState.progress = progress
           room.targetState.lastSync = new Date().getTime() / 1000
           await broadcast(room)
         })
 
-        // 🔥 ОБНОВЛЕННАЯ ЛОГИКА: ЦИКЛИЧЕСКИЙ ПЛЕЙЛИСТ
        // 🔥 ОБНОВЛЕННАЯ ЛОГИКА: ЦИКЛИЧЕСКИЙ ПЛЕЙЛИСТ С ОТЛАДКОЙ
         socket.on("playEnded", async () => {
           let room = await getRoom(roomId)
           if (room === null) {
-            throw new Error("Play ended for non existing room:" + roomId)
+            throw new Error("Игра окончена из-за несуществующей комнаты:" + roomId)
           }
           
           // 🔍 ОТЛАДОЧНЫЕ ЛОГИ
-          log("🎬 playback ended")
-          log("📊 PLAYLIST DEBUG:", {
+          log("🎬 воспроизведение закончилось")
+          log("📊 ОТЛАДКА ПЛЕЙЛИСТА:", {
             currentIndex: room.targetState.playlist.currentIndex,
             playlistLength: room.targetState.playlist.items.length,
             loopEnabled: room.targetState.loop,
@@ -209,7 +208,7 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
             // 1. Если включен LOOP одного видео - повторяем его
             room.targetState.progress = 0
             room.targetState.paused = false
-            log("🔁 LOOP: looping current video")
+            log("🔁 LOOP: зацикливание текущего видео")
           } else if (
             room.targetState.playlist.currentIndex + 1 <
             room.targetState.playlist.items.length
@@ -220,36 +219,36 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
             room.targetState.playlist.currentIndex = nextIndex
             room.targetState.progress = 0
             room.targetState.paused = false
-            log("▶️ NEXT VIDEO: playing next video in playlist, index:", nextIndex)
-            log("📹 Next video src:", room.targetState.playing.src[0]?.src?.substring(0, 80) + '...')
+            log("▶️ СЛЕДУЮЩЕЕ ВИДЕО: воспроизведение следующего видео в плейлисте, индекс:", nextIndex)
+            log("📹 Источник следующего видео:", room.targetState.playing.src[0]?.src?.substring(0, 80) + '...')
           } else if (room.targetState.playlist.items.length > 0) {
             // 3. 🔥 НОВАЯ ЛОГИКА: Дошли до конца плейлиста - начинаем сначала!
             room.targetState.playing = room.targetState.playlist.items[0]
             room.targetState.playlist.currentIndex = 0
             room.targetState.progress = 0
             room.targetState.paused = false
-            log("🔄 PLAYLIST CYCLE: last video ended, restarting from first video!")
-            log("📹 First video src:", room.targetState.playing.src[0]?.src?.substring(0, 80) + '...')
+            log("🔄 ЦИКЛ ПЛЕЙЛИСТА: последнее видео закончилось, перезапуск с первого видео!")
+            log("📹Источник первого видео:", room.targetState.playing.src[0]?.src?.substring(0, 80) + '...')
           } else {
             // 4. Если плейлист пустой - останавливаемся
             room.targetState.progress =
               room.users.find((user) => user.socketIds[0] === socket.id)?.player
                 .progress || 0
             room.targetState.paused = true
-            log("⏹️ EMPTY: empty playlist, stopping playback")
+            log("⏹️ ПУСТО: пустой плейлист, остановка воспроизведения")
           }
 
           room.targetState.lastSync = new Date().getTime() / 1000
           await broadcast(room)
-          log("📡 Broadcast sent with updated room state")
+          log("📡 Трансляция отправлена ​​с обновленным состоянием комнаты")
         })
 
         socket.on("playAgain", async () => {
           let room = await getRoom(roomId)
           if (room === null) {
-            throw new Error("Play again for non existing room:" + roomId)
+            throw new Error("Сыграйте еще раз для несуществующей комнаты:" + roomId)
           }
-          log("play same media again")
+          log("воспроизвести тот же медиафайл снова")
 
           room.targetState.progress = 0
           room.targetState.paused = false
@@ -260,19 +259,19 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
         socket.on("playItemFromPlaylist", async (index) => {
           let room = await getRoom(roomId)
           if (room === null) {
-            throw new Error("Play ended for non existing room:" + roomId)
+            throw new Error("Игра окончена из-за несуществующей комнаты:" + roomId)
           }
 
           if (index < 0 || index >= room.targetState.playlist.items.length) {
             return log(
-              "out of index:",
+              "вне индекса:",
               index,
-              "playlist.length:",
+              "длина плейлиста:",
               room.targetState.playlist.items.length
             )
           }
 
-          log("playing item", index, "from playlist")
+          log("игровой предмет", index, "из плейлиста")
           room.targetState.playing = room.targetState.playlist.items[index]
           room.targetState.playlist.currentIndex = index
           room.targetState.progress = 0
@@ -283,18 +282,18 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
         socket.on("updatePlaylist", async (playlist: Playlist) => {
           const room = await getRoom(roomId)
           if (room === null) {
-            throw new Error("Setting playlist for non existing room:" + roomId)
+            throw new Error("Настройка плейлиста для несуществующей комнаты:" + roomId)
           }
-          log("playlist update", playlist)
+          log("обновление плейлиста", playlist)
 
           if (
             playlist.currentIndex < -1 ||
             playlist.currentIndex >= playlist.items.length
           ) {
             return log(
-              "out of index:",
+              "вне индекса:",
               playlist.currentIndex,
-              "playlist.length:",
+              "длина плейлиста:",
               playlist.items.length
             )
           }
@@ -306,9 +305,9 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
         socket.on("updateUser", async (user: UserState) => {
           const room = await getRoom(roomId)
           if (room === null) {
-            throw new Error("Setting user for non existing room:" + roomId)
+            throw new Error("Настройка пользователя для несуществующей комнаты:" + roomId)
           }
-          log("user update", user)
+          log("обновление пользователя", user)
 
           room.users = room.users.map((u) => {
             if (u.socketIds[0] !== socket.id) {
@@ -330,10 +329,10 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
           const room = await getRoom(roomId)
           if (room === null) {
             throw new Error(
-              "Impossible non existing room, cannot send anything:" + roomId
+              "Невозможная несуществующая комната, ничего отправить невозможно:" + roomId
             )
           }
-          log("playing url", url)
+          log("URL-адрес воспроизведения", url)
 
           if (!isUrl(url)) {
             return
@@ -363,7 +362,7 @@ const ioHandler = (_: NextApiRequest, res: NextApiResponse) => {
           const room = await getRoom(roomId)
           if (room === null) {
             throw new Error(
-              "Impossible non existing room, cannot send anything:" + roomId
+              "Невозможная несуществующая комната, ничего отправить невозможно:" + roomId
             )
           }
 

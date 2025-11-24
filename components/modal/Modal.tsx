@@ -56,7 +56,7 @@ const Modal: FC<Props> = ({ title, show, close, children }) => {
               className={"p-2 bg-dark-600"}
               onClick={close}
             >
-              Close
+              Закрывать
             </Button>
           </div>
         </div>

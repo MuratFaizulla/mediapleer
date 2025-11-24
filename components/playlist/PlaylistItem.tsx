@@ -28,7 +28,7 @@ const titleGen = (item: MediaElement, index: number) => {
   if (item.title && item.title !== "") {
     return item.title
   }
-  return "Item #" + (index + 1)
+  return "Плейлист №" + (index + 1)
 }
 
 const PlaylistItem: FC<Props> = ({

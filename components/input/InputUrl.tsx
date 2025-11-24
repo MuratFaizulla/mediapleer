@@ -72,7 +72,7 @@ const InputUrl: FC<Props> = ({
           </button>
         </div>
       </div>
-      {!valid && <div className={"text-red-600"}>Invalid url</div>}
+      {!valid && <div className={"text-red-600"}>Неверный URL</div>}
     </form>
   )
 }

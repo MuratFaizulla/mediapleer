@@ -3,8 +3,8 @@ export function getSiteName(): string {
     return <string>process.env.SITE_NAME
   }
 
-  console.warn("ENV 'SITE_NAME' has no value, using default:", "Web-SyncPlay")
-  return "Web-SyncPlay"
+  console.warn("Переменная окружения 'SITE_NAME' не задана, используется значение по умолчанию:", "Web-SyncPlay")
+  return "Mediapleer"
 }
 
 export function getSiteDomain(): string {
@@ -14,10 +14,10 @@ export function getSiteDomain(): string {
   }
 
   console.warn(
-    "ENV 'PUBLIC_DOMAIN' has no value, using default:",
+    "Переменная окружения 'PUBLIC_DOMAIN' не задана, используется значение по умолчанию:",
     "https://web-syncplay.de"
   )
-  return "https://web-syncplay.de"
+  return "http:10.35.15.28.:3000"
 }
 
 export function getRedisURL(): string {
@@ -26,7 +26,7 @@ export function getRedisURL(): string {
   }
 
   console.warn(
-    "ENV 'REDIS_URL' has no value, using default:",
+    "Переменная окружения 'REDIS_URL' не задана, используется значение по умолчанию:",
     "redis://localhost:6379"
   )
   return "redis://localhost:6379"
@@ -37,6 +37,6 @@ export function getDefaultSrc(): string {
     return <string>process.env.DEFAULT_SRC
   }
 
-  // console.warn("ENV 'DEFAULT_SRC' has no value, using no src")
-  return "https://youtu.be/NcBjx_eyvxc4"
+  // console.warn("Переменная окружения 'DEFAULT_SRC' не задана, источник не указан")
+  return "https://youtu.be/ReRupRWGs2Y?si=DvBuBHWPWDG0jKFg"
 }

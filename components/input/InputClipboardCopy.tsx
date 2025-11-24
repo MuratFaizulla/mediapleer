@@ -36,7 +36,7 @@ const InputClipboardCopy: FC<Props> = ({ value, className }) => {
             })
         }}
       >
-        <IconClipboard /> Copy
+        <IconClipboard /> Копировать
       </button>
     </div>
   )

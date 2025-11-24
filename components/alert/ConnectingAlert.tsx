@@ -11,7 +11,7 @@ const ConnectingAlert: FC<AlertProps> = ({
   return (
     <Alert canClose={canClose} className={classNames("cursor-wait", className)}>
       <IconLoading className={"hide-below-sm animate-spin"} />
-      <div className={styles.loading}>Connecting ...</div>
+      <div className={styles.loading}>Подключение ...</div>
     </Alert>
   )
 }

@@ -74,7 +74,7 @@ const UserItem: FC<Props> = ({ user, ownerId, socketId, updateName }) => {
             className={"grow h-full"}
             value={name}
             onChange={updateName}
-            placeholder={"Change your name"}
+            placeholder={"Изменить свое имя"}
           />
         ) : (
           <>

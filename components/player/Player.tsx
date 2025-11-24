@@ -160,7 +160,7 @@ const Player: FC<Props> = ({ roomId, socket, fullHeight }) => {
         paused,
         playbackRate
       )
-      console.log("Not in sync, seeking to", t)
+      console.log("Не синхронизированы, стремясь", t)
       player.current.seekTo(t, "seconds")
     }
   }, [
@@ -186,7 +186,7 @@ const Player: FC<Props> = ({ roomId, socket, fullHeight }) => {
 
     socket.on("update", (room: RoomState) => {
       if (!readyRef.current) {
-        return console.log("Not ready yet...")
+        return console.log("Пока не готово...")
       }
 
       if (deltaServerTimeRef.current === 0) {
@@ -273,28 +273,28 @@ const Player: FC<Props> = ({ roomId, socket, fullHeight }) => {
         volume={volume}
         muted={muted}
         onReady={() => {
-          console.log("React-Player is ready")
+          console.log("React-Player готов")
           setReady(true)
           setBuffering(false)
           // need "long" timeout for yt to be ready
           setTimeout(() => {
             const internalPlayer = player.current?.getInternalPlayer()
-            console.log("Internal player:", player)
+            console.log("Внутренний проигрыватель:", player)
             if (
               typeof internalPlayer !== "undefined" &&
               internalPlayer.unloadModule
             ) {
-              console.log("Unloading cc of youtube player")
+              console.log("Выгрузка cc плеера YouTube")
               internalPlayer.unloadModule("cc") // Works for AS3 ignored by html5
               internalPlayer.unloadModule("captions") // Works for html5 ignored by AS3
             }
           }, 1000)
         }}
         onPlay={() => {
-          console.log("player started to play")
+          console.log("плеер начал играть")
           if (paused) {
             const internalPlayer = player.current?.getInternalPlayer()
-            console.warn("Started to play despite being paused", internalPlayer)
+            console.warn("Начал играть, несмотря на паузу", internalPlayer)
             if (typeof internalPlayer !== "undefined") {
               if ("pause" in internalPlayer) {
                 internalPlayer.pause()
@@ -306,11 +306,11 @@ const Player: FC<Props> = ({ roomId, socket, fullHeight }) => {
           }
         }}
         onPause={() => {
-          console.log("player paused")
+          console.log("плеер поставлен на паузу")
           if (!paused) {
             const internalPlayer = player.current?.getInternalPlayer()
             console.warn(
-              "Started to pause despite being not paused",
+              "Начал ставить на паузу, хотя не был поставлен на паузу",
               internalPlayer
             )
             if (typeof internalPlayer !== "undefined") {
@@ -327,9 +327,9 @@ const Player: FC<Props> = ({ roomId, socket, fullHeight }) => {
         onBufferEnd={() => setBuffering(false)}
         onEnded={() => socket?.emit("playEnded")}
         onError={(e) => {
-          console.error("playback error", e)
+          console.error("ошибка воспроизведения", e)
           if ("target" in e && "type" in e && e.type === "error") {
-            console.log("Trying to get video url via yt-dlp...")
+            console.log("Пытаюсь получить URL видео через yt-dlp...")
             fetch("/api/source", { method: "POST", body: currentSrc.src })
               .then((res) => {
                 if (res.status === 200) {
@@ -338,7 +338,7 @@ const Player: FC<Props> = ({ roomId, socket, fullHeight }) => {
                 return res.text()
               })
               .then((data) => {
-                console.log("Received data", data)
+                console.log("Полученные данные", data)
                 if (typeof data === "string") {
                   throw new Error(data)
                 }
@@ -355,7 +355,7 @@ const Player: FC<Props> = ({ roomId, socket, fullHeight }) => {
                 })
               })
               .catch((error) => {
-                console.error("Failed to get video url", error)
+                console.error("Не удалось получить URL-адрес видео", error)
               })
             setError(e)
           }
@@ -363,7 +363,7 @@ const Player: FC<Props> = ({ roomId, socket, fullHeight }) => {
         onProgress={({ playedSeconds }) => {
           if (!ready) {
             console.warn(
-              "React-Player did not report it being ready, but already playing"
+              "React-Player не сообщил о готовности, но уже воспроизводится"
             )
             // sometimes onReady doesn't fire, but if there's playback...
             setReady(true)

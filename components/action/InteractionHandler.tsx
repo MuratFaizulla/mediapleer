@@ -52,7 +52,7 @@ const InteractionHandler: FC<Props> = ({
         touch()
         if (onClick) {
           if (prevent) {
-            console.log("Prevent default touch start")
+            console.log("Запретить сенсорный запуск по умолчанию")
             e.preventDefault()
             e.stopPropagation()
           }
@@ -62,7 +62,7 @@ const InteractionHandler: FC<Props> = ({
         touch()
         if (onClick) {
           if (prevent) {
-            console.log("Prevent default touch end")
+            console.log("Предотвратить завершение касания по умолчанию")
             e.preventDefault()
             e.stopPropagation()
           }

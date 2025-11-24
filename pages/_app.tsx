@@ -21,8 +21,8 @@ const App = ({ Component, pageProps }: AppProps) => {
           content='Watch videos or play music in sync with your friends'
         />
 
-        <meta name='copyright' content='Yasamato, 2022' />
-        <meta name='author' content='Yasamato <https://github.com/Yasamato' />
+        <meta name='copyright' content='MEDIAPLEER, 2025' />
+        <meta name='author' content='MEDIAPLEER' />
 
         <link
           rel='apple-touch-icon'

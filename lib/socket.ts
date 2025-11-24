@@ -42,14 +42,14 @@ export function playItemFromPlaylist(
     typeof playlist.items[index] === "undefined" ||
     playlist.items[index] === null
   ) {
-    console.error("Impossible to play", index, "from", playlist)
+    console.error("Невозможно играть", index, "от", playlist)
     return
   }
   socket.emit("playItemFromPlaylist", index)
 }
 
 export function createClientSocket(roomId: string) {
-  console.log("Trying to join room", roomId)
+  console.log("Пытаюсь присоединиться к комнате", roomId)
   const socket = io({
     query: {
       roomId,
@@ -59,7 +59,7 @@ export function createClientSocket(roomId: string) {
   })
 
   socket.on("connect", () => {
-    console.log("Established ws connection to io server", socket.id)
+    console.log("Установлено ws-соединение с сервером io", socket.id)
   })
 
   socket.on("disconnect", (reason) => {

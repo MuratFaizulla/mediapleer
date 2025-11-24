@@ -30,14 +30,14 @@ const Navbar = ({ roomId }: { roomId?: string }) => {
       {roomId && (
         <>
           <Modal
-            title={"Invite your friends"}
+            title={"Пригласите своих друзей"}
             show={showShare}
             close={() => setShowShare(false)}
           >
-            <div>Share this link to let more people join in on the fun</div>
+            <div>Поделитесь этой ссылкой, чтобы больше людей присоединились к веселью</div>
             <InputClipboardCopy
               className={"bg-dark-1000"}
-              value={getSiteDomain() + "/room/" + roomId}
+              value={getSiteDomain() + "/player/" + roomId}
             />
           </Modal>
           <Button
@@ -49,7 +49,7 @@ const Navbar = ({ roomId }: { roomId?: string }) => {
           >
             <div className={"flex items-center mx-1"}>
               <IconShare className={"mr-1"} />
-              Share
+              Поделиться
             </div>
           </Button>
         </>

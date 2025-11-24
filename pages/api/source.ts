@@ -17,7 +17,7 @@ const memoizeExtractFromUrl = () => {
     }
 
     if (!isUrl(url)) {
-      console.error("Invalid url provided to source video from:", url)
+      console.error("Неверный URL-адрес источника видео:", url)
       cache[url] = {
         error: true,
         stdout: "",
@@ -30,7 +30,7 @@ const memoizeExtractFromUrl = () => {
       // 🔥 НОВОЕ: Проверяем OneDrive ссылки
       if (isOneDriveUrl(url)) {
         const directUrl = convertOneDriveToDirectUrl(url)
-        console.log("OneDrive URL converted:", url, "->", directUrl)
+        console.log("URL-адрес OneDrive преобразован:", url, "->", directUrl)
         
         cache[url] = {
           error: false,
@@ -89,7 +89,7 @@ export default async function source(
   if (!isUrl(url)) {
     return res.status(400).send("Invalid url")
   }
-  console.log("Requested video source of", req.body, "sanitized", url)
+  console.log("Запрошенный источник видео", req.body, "sanitized", url)
 
   await handleResult(url, res)
 }
