@@ -8,10 +8,14 @@ export interface MediaOption {
   resolution: string
 }
 
+
+// Обновить MediaElement (добавить 2 поля):
 export interface MediaElement {
   title?: string
   sub: Subtitle[]
   src: MediaOption[]
+  source?: MediaSource      // 🔥 Добавь
+  originalUrl?: string      // 🔥 Добавь
 }
 
 export interface Playlist {
@@ -86,3 +90,4 @@ export interface MediaElement {
   source?: MediaSource  // 🔥 НОВОЕ поле
   originalUrl?: string  // 🔥 Исходная ссылка
 }
+

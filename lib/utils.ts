@@ -153,3 +153,10 @@ export const getOneDriveEmbedUrl = (shareUrl: string): string => {
   const directUrl = convertOneDriveToDirectUrl(shareUrl)
   return directUrl.replace('/download', '/embed')
 }
+export const isBlobUrl = (url: string): boolean => {
+  return url.startsWith('blob:')
+}
+
+export const isValidMediaUrl = (url: string): boolean => {
+  return isUrl(url) || isBlobUrl(url)
+}

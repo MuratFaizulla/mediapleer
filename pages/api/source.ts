@@ -56,7 +56,6 @@ const memoizeExtractFromUrl = () => {
   }
 }
 
-// Остальной код остается без изменений...
 
 const extractFromUrl = memoizeExtractFromUrl()
 
